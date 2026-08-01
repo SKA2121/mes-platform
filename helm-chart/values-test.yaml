@@ -1,0 +1,18 @@
+api:
+  image:
+    repository: nginxinc/nginx-unprivileged
+    tag: "alpine"
+  replicas: 2
+  service:
+    port: 80
+  probes:
+    enabled: false
+ingress:
+  enabled: true
+  host: mes-test.lab.local
+postgres:
+  enabled: false
+highAvailability:
+  podAntiAffinity: false
+  podDisruptionBudget:
+    enabled: false

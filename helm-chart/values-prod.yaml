@@ -1,0 +1,12 @@
+# PROD : 3 replicas, HA activée.
+api:
+  replicas: 3
+  version: "1.0.0"
+  resources:
+    requests: { cpu: 100m, memory: 96Mi }
+    limits: { cpu: 300m, memory: 192Mi }
+ingress:
+  host: mes.lab.local
+highAvailability:
+  podAntiAffinity: true
+  podDisruptionBudget: { enabled: true, minAvailable: 2 }

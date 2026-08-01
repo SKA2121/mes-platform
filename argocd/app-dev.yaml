@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mes-platform-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ska2121/mes-platform.git
+    targetRevision: main
+    path: helm-chart
+    helm:
+      valueFiles: [values-dev.yaml]
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mes-dev
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]

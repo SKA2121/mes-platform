@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mes-platform-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ska2121/mes-platform.git
+    targetRevision: main
+    path: helm-chart
+    helm:
+      valueFiles: [values-prod.yaml]
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mes-prod
+  syncPolicy:
+    syncOptions: [CreateNamespace=true]

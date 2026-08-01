@@ -1,0 +1,49 @@
+---
+# Playbook exécuté par AWX (ou en CLI) pour déployer la plateforme MES.
+# Tourne sur le control node (k3s-server) et pilote le cluster via l'API.
+#
+# CLI :
+#   ansible-playbook ansible/playbooks/deploy.yml -e env=dev
+#
+# Via AWX : c'est ce playbook que le Job Template exécute, déclenchable
+# par l'API REST (le pattern Control-M -> AAP de ton futur poste).
+
+- name: Déployer la plateforme MES
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true                       # pour lire le kubeconfig k3s (root)
+  vars:
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    env: dev
+    chart_path: "{{ playbook_dir }}/../../helm-chart"
+  tasks:
+    - name: Créer le namespace mes-{{ env }}
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: v1
+        kind: Namespace
+        name: "mes-{{ env }}"
+        state: present
+
+    - name: Déployer le chart Helm ({{ env }})
+      kubernetes.core.helm:
+        kubeconfig: "{{ kubeconfig }}"
+        name: mes-platform
+        chart_ref: "{{ chart_path }}"
+        release_namespace: "mes-{{ env }}"
+        values_files:
+          - "{{ chart_path }}/values-{{ env }}.yaml"
+        wait: true
+        state: present
+
+    - name: Vérifier les pods déployés
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        kind: Pod
+        namespace: "mes-{{ env }}"
+      register: pods
+
+    - name: Résumé
+      ansible.builtin.debug:
+        msg: "{{ pods.resources | length }} pod(s) dans mes-{{ env }}"

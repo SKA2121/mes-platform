@@ -1,0 +1,38 @@
+# Valeurs de base. Chaque environnement surcharge via values-<env>.yaml.
+api:
+  image:
+    repository: ghcr.io/ska2121/mes-platform
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  replicas: 2
+  version: "1.0.0"
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits: { cpu: 200m, memory: 128Mi }
+  service:
+    port: 80
+
+ingress:
+  enabled: true
+  host: mes.lab.local
+  className: ""
+
+postgres:
+  enabled: true
+  image: { repository: postgres, tag: "16-alpine" }
+  storage: 2Gi
+  storageClass: nfs-client
+  db: { name: mes, user: mes }
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 256Mi }
+
+highAvailability:
+  podAntiAffinity: true
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001

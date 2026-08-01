@@ -1,0 +1,9 @@
+# DEV : léger, 1 replica, pas de HA.
+api:
+  replicas: 1
+  version: "1.0.0-dev"
+ingress:
+  host: mes-dev.lab.local
+highAvailability:
+  podAntiAffinity: false
+  podDisruptionBudget: { enabled: false }
