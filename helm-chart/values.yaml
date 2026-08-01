@@ -1,8 +1,12 @@
 # Valeurs de base. Chaque environnement surcharge via values-<env>.yaml.
 api:
+  probes:
+    enabled: true
+  probes:
+    enabled: true
   image:
     repository: ghcr.io/ska2121/mes-platform
-    tag: "1.0.0"
+    tag: "latest"
     pullPolicy: IfNotPresent
   replicas: 2
   version: "1.0.0"
